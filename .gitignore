@@ -1,0 +1,37 @@
+# Local identities, credentials, browser sessions and generated material
+**/.env
+**/.env.*
+!**/.env.example
+**/*.local.yaml
+**/*.local.json
+**/applicant_profile.json
+**/account_secrets.json
+**/browser-profile*/
+**/data/
+**/debug/
+**/logs/
+**/.venv*/
+**/__pycache__/
+**/*.pyc
+**/.playwright-browsers*/
+**/.vanguard.lock
+job-agent/jobs/
+job-agent/tracker/
+job-agent/outreach/
+job-agent/base/*.tex
+!job-agent/base/*.example.tex
+job-agent/base/voice.md
+exports/
+var/
+*.aux
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+.DS_Store
+
+# Also ignore local links to existing runtime directories.
+job-scraper/data
+job-scraper/browser-profile
+
+.venv

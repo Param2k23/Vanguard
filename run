@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Use the repository environment without requiring terminal activation.
+set -euo pipefail
+vanguard_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -n "${VANGUARD_PYTHON:-}" ]]; then
+    vanguard_python="$VANGUARD_PYTHON"
+elif [[ -x "$vanguard_root/.venv/bin/python" ]]; then
+    vanguard_python="$vanguard_root/.venv/bin/python"
+else
+    vanguard_python=python3
+fi
+exec "$vanguard_python" "$vanguard_root/vanguard.py" "$@"

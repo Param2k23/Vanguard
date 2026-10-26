@@ -1,0 +1,14 @@
+# Copy to pipeline.local.yaml. Paths resolve from the Vanguard repository root.
+scraper_dir: job-scraper
+agent_dir: job-agent
+export_dir: exports
+run_dir: var/runs
+limit: 15
+email: your-email@example.com
+resume_prefix: Applicant
+# Your GitHub username; used to check project link formatting.
+github_user: your-github-username
+# Optional: use your configured Codex model by leaving this out.
+# model: your-model
+# export_mount: /mnt/d
+# browser_path: /absolute/path/to/playwright-browsers

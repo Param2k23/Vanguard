@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Fixture application</title>
+<h1>Software Engineer</h1><p>Example Company</p>
+<form id="application">
+<section id="one">
+<label>Full legal name<input name="full_name" required></label>
+<label>Email address<input type="email" name="email" required></label>
+<label>Phone number<input type="tel" name="phone" required></label>
+<label>University<input name="university" required></label>
+<label>Degree<select name="degree" required><option value="">Select</option><option>Master of Science</option><option>Bachelor of Science</option></select></label>
+<label>Field of study<input name="major" required></label>
+<label>Most recent employer<input name="employer" required></label>
+<label>Most recent job title<input name="job_title" required></label>
+<label>Most recent employment start month<input type="month" name="work_start" required></label>
+<label>Technical skills<input name="skills" required></label>
+<label>Resume<input type="file" name="resume" accept=".pdf" required></label>
+<button type="button" id="next">Next</button>
+</section>
+<section id="two" hidden>
+<label>Are you legally authorized to work in the United States?<select required name="authorized"><option value="">Select</option><option>Yes</option><option>No</option></select></label>
+<fieldset><legend>Will you now or in the future require sponsorship for employment visa status?</legend><label><input type="radio" name="sponsorship" value="Yes" required>Yes</label><label><input type="radio" name="sponsorship" value="No" required>No</label></fieldset>
+<label>When does your current work authorization expire?<input type="date" name="expiration" required></label>
+<label>Gender<select name="gender"><option value="">Select</option><option>Male</option><option>I do not wish to answer</option></select></label>
+<label>Describe your experience with Python<textarea name="technical_answer" required maxlength="300"></textarea></label>
+<label>Portfolio<input name="portfolio" type="url"></label>
+<div id="conditional"></div>
+<button type="submit">Submit application</button>
+</section>
+</form><div role="status" id="result"></div>
+<script>
+const form=document.querySelector('form');
+document.querySelector('#next').onclick=()=>{
+ if(![...document.querySelectorAll('#one input,#one select')].every(x=>x.checkValidity()))return;
+ document.querySelector('#one').hidden=true;document.querySelector('#two').hidden=false;
+};
+document.querySelector('select[name=authorized]').onchange=()=>{
+ document.querySelector('#conditional').innerHTML='<label>Are you a U.S. citizen?<select required name="citizen"><option value="">Select</option><option>Yes</option><option>No</option></select></label>';
+};
+form.onsubmit=async event=>{
+ event.preventDefault();
+ const response=await fetch('/submit'+location.search,{method:'POST',body:new FormData(form)});
+ const text=await response.text();
+ if(response.ok){form.hidden=true;document.querySelector('#result').textContent=text;}
+ else {let div=document.createElement('div');div.setAttribute('role','alert');div.textContent=text;form.append(div);}
+};
+</script></html>

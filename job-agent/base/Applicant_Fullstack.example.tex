@@ -1,0 +1,43 @@
+% FICTIONAL EXAMPLE ONLY. Replace every fact with your own before using.
+\documentclass[10pt,letterpaper]{article}
+\usepackage[margin=0.6in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\pagestyle{empty}
+\setcounter{secnumdepth}{0}
+\setlength{\parindent}{0pt}
+\newcommand{\resumeProjectHeading}[2]{\textbf{#1}\hfill #2\par}
+\newcommand{\resumeItem}[1]{\item #1}
+\begin{document}
+\begin{center}{\Large Example Applicant}\\
+applicant@example.com $|$ github.com/example-user\end{center}
+\section*{Summary}
+Software engineer with experience building tested services and data processing tools.
+\section{Education}
+Example University --- Example degree. Replace with your actual qualification and dates.
+\section{Experience}
+Example Organization --- Example role. Replace with your actual employer and dates.
+\begin{itemize}[nosep,leftmargin=*]
+\resumeItem{Implemented a sample processing service with documented tests and performance measurements.}
+\end{itemize}
+\section{Projects}
+\resumeProjectHeading{\textbf{Data Pipeline Lab}}{\href{https://github.com/example-user/data-pipeline-lab}{\underline{example-user/data-pipeline-lab}}}
+\begin{itemize}[nosep,leftmargin=*]
+\resumeItem{Built a sample ingestion pipeline processing 1000 synthetic records with validation checks.}
+\resumeItem{Implemented 20 automated checks covering parsing errors and duplicate handling in batches.}
+\resumeItem{Measured sample query latency across 10 repeatable trials with a documented test dataset.}
+\end{itemize}
+\resumeProjectHeading{\textbf{Enterprise Agent Lab}}{\href{https://github.com/example-user/enterprise-agent-lab}{\underline{example-user/enterprise-agent-lab}}}
+\begin{itemize}[nosep,leftmargin=*]
+\resumeItem{Built a fictional routing demo supporting 50+ LLM providers using recorded fixture responses.}
+\resumeItem{Validated 30 sample workflows with repeatable fixtures and isolated integration test cases.}
+\resumeItem{Recorded sample benchmark results from 10 runs and documented failure recovery behavior.}
+\end{itemize}
+\section{Technical Skills}
+\begin{itemize}[nosep,leftmargin=*]
+\item {\textbf{Languages}{: Python, Java, SQL, JavaScript, TypeScript, Bash, HTML, CSS}\\
+\textbf{Tools}{: Git, Linux, Docker, PostgreSQL, automated testing, continuous integration}}
+\end{itemize}
+\end{document}

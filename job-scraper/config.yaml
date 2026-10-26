@@ -1,0 +1,50 @@
+# REQUIRED: replace with the URL of your logged-in Jobright feed.
+feed_url: "https://jobright.ai/jobs/recommend"
+login_url: https://jobright.ai/
+max_scroll_attempts: 25
+# Stop early when scrolling repeatedly reveals no unseen card identities.
+max_stalled_scrolls: 3
+scroll_wait_timeout_ms: 6000
+navigation_timeout_ms: 45000
+settle_ms: 1500
+# Bounded wait for client-rendered cards after navigation and scrolling.
+card_wait_timeout_ms: 15000
+filters:
+  skip_reposted: true
+  skip_consulting: true
+  skip_educational: true
+  us_only: true
+selectors:
+  # Observed in saved feed HTML (2026-10-12); no hashed class suffixes.
+  cards: '[data-tut="jobs-card-match-score"]'
+  title: 'h2'
+  # Repost badge structure is a conservative guess (no repost in saved HTML).
+  card_badges: 'span.ant-tag, [data-testid="repost-badge"]'
+  # Feed industry/type row; detail company tags expose additional types.
+  card_company_types: 'h2 + div > div:last-child'
+  card_locations: '[class*="index_primary-location__"]'
+  detail_locations: '[class*="index_jobDetailContent__"] [class*="index_primary-location__"]'
+  detail_company: '[class*="index_jobDetailContent__"] [class*="index_company-name__"], [class*="index_companyName__"]'
+  detail_badges: 'span.ant-tag, [data-testid="repost-badge"]'
+  detail_company_types: '[class*="index_companyTags__"] > span'
+  # Company is the first item of the row immediately after the heading.
+  company: 'h2 + div > div:first-child'
+  link: 'a[href*="/jobs/info/"]:has(h2)'
+  # Virtualized feed panel; readable CSS module prefix, without generated suffix.
+  # A hint only: checked against actual overflow/geometry. If not scrollable,
+  # use a scrollable card ancestor, then the document.
+  scroll_container: '[class*="index_jobs-list-scrollable__"]'
+  # Original posting links on Jobright detail pages. No buttons are clicked.
+  apply_links: 'a[href][data-testid="apply-button"], a[href]:has-text("Apply"), a[href]:has-text("Original posting")'
+  login_wall: 'input[type="password"], form[action*="login"]'
+  verification: 'iframe[src*="captcha"], .g-recaptcha, #challenge-running'
+  json_ld: 'script[type="application/ld+json"]'
+  remove: 'nav, header, footer, script, style, noscript, [role="navigation"], [role="dialog"], [class*="cookie-banner"], [id*="cookie-banner"]'
+  ats:
+    greenhouse: '#content, #job_description, .job__description'
+    lever: '.section-wrapper.page-full-width, .posting-page .content'
+    ashby: '[class*="jobPostingDescription"], [data-testid="job-description"]'
+    workday: '[data-automation-id="jobPostingDescription"]'
+    smartrecruiters: '.job-description, [itemprop="description"]'
+    jobright: '[data-testid="job-description"], .job-description'
+  main: 'main, article, [role="main"]'

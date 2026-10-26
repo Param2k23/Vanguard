@@ -1,0 +1,43 @@
+# Match employer fields only, never job-description text.
+default_application_policy: AUTO_APPLY
+referral_required_companies:
+  - Amazon
+  - Google
+  - Microsoft
+  - Adobe
+  - NVIDIA
+  - Cisco
+  - Bloomberg
+  - Freddie Mac
+  - Arch Group
+excluded_companies:
+  - TikTok
+  - IBM
+company_aliases:
+  Amazon.com: Amazon
+  Amazon Web Services: Amazon
+  AWS: {company: Amazon, requires_verification: true}
+  Google LLC: Google
+  Alphabet: {company: Google, requires_verification: true}
+  Microsoft Corporation: Microsoft
+  Adobe Inc.: Adobe
+  NVIDIA Corporation: NVIDIA
+  Cisco Systems: Cisco
+  Bloomberg LP: Bloomberg
+  Bloomberg L.P.: Bloomberg
+  FreddieMac: Freddie Mac
+  FredieMac: Freddie Mac
+  Federal Home Loan Mortgage Corporation: Freddie Mac
+  Arch Capital Group: Arch Group
+  Arch Insurance: Arch Group
+  Arch Mortgage Insurance: Arch Group
+  Arch MI: {company: Arch Group, requires_verification: true}
+  TikTok Inc.: TikTok
+  TikTok Ltd.: TikTok
+  IBM Corporation: IBM
+  International Business Machines: IBM
+  International Business Machines Corporation: IBM
+matching_rules:
+  exact_normalized_names_only: true
+  # Explicit job IDs mapped to canonical employer after manual identity verification.
+  verified_employer_jobs: {}

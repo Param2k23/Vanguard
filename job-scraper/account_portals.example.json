@@ -1,0 +1,13 @@
+{
+  "ACCOUNT_PORTALS": [
+    {
+      "company": "Replace with verified employer",
+      "origin": "https://replace-with-verified-employer.example",
+      "tenant": "replace-with-verified-employer-tenant",
+      "login_url": "/login",
+      "registration_url": "/register",
+      "authenticated_selector": "[data-authenticated='true']",
+      "authenticated_email_selector": "[data-applicant-email]"
+    }
+  ]
+}

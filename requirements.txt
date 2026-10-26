@@ -1,0 +1,4 @@
+playwright>=1.49,<2
+PyYAML>=6,<7
+beautifulsoup4>=4.12,<5
+cryptography>=46,<47
