@@ -71,7 +71,8 @@ def resume_stage(config, before, fallback):
     report_path = reports[-1]
     report = json.loads(report_path.read_text(encoding='utf-8'))
     for stage in vanguard.STAGES:
-        if report.get('stages', {}).get(stage, {}).get('status') != 'completed':
+        # Resumed reports omit earlier stages; absence is not a failed stage.
+        if stage in report.get('stages', {}) and report['stages'][stage].get('status') != 'completed':
             return stage, str(report_path)
     return fallback, str(report_path)
 

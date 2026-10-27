@@ -64,6 +64,30 @@ class ScheduleTests(unittest.TestCase):
         self.assertEqual(run.call_args.args[1].from_stage, 'export')
         self.assertEqual(state['current']['slot'], schedule.slot_at(self.now))
 
+    def test_resumed_export_failure_stays_at_export_across_slots(self):
+        state = {'current': {'slot': 'older', 'status': 'failed', 'next_stage': 'export'}}
+        def failure(config, args):
+            self.assertEqual(args.from_stage, 'export')
+            report = {'stages': {'export': {'status': 'failed'}}}
+            (config['run_dir'] / 'export.json').write_text(json.dumps(report))
+            return 1
+        with patch.object(vanguard, 'run', side_effect=failure):
+            self.assertEqual(schedule.execute(self.config, self.root, self.state_path, state, self.now), 1)
+        self.assertEqual(state['current']['next_stage'], 'export')
+        with patch.object(vanguard, 'run', return_value=0) as run:
+            schedule.execute(self.config, self.root, self.state_path, state, self.now.replace(hour=13))
+        self.assertEqual(run.call_args.args[1].from_stage, 'export')
+
+    def test_resumed_generation_then_failed_export_does_not_restart_scraping(self):
+        state = {'current': {'slot': 'older', 'status': 'failed', 'next_stage': 'resumes'}}
+        def failure(config, args):
+            report = {'stages': {'resumes': {'status': 'completed'}, 'export': {'status': 'failed'}}}
+            (config['run_dir'] / 'resumed.json').write_text(json.dumps(report))
+            return 1
+        with patch.object(vanguard, 'run', side_effect=failure):
+            schedule.execute(self.config, self.root, self.state_path, state, self.now)
+        self.assertEqual(state['current']['next_stage'], 'export')
+
     def test_stage_checkpoint_persisted_before_process_interruption(self):
         state = {}
         def interrupted(config, args):

@@ -46,6 +46,7 @@ class PipelineTests(unittest.TestCase):
                          ['scrape.py', 'generate_resumes.py', 'export_pdfs.py'])
         self.assertNotIn('--limit', calls[1][0])
         self.assertIn('--apply', calls[2][0])
+        self.assertIn('--skip-unverified', calls[2][0])
         self.assertEqual(calls[1][1]['env']['RESUME_EXPORT_APPLY'], '0')
         self.assertEqual(calls[1][1]['env']['VANGUARD_DEFER_EXPORT'], '1')
         self.assertEqual(self.report()['status'], 'completed')

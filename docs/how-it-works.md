@@ -59,7 +59,11 @@ implementation work. The pipeline has no interactive resume approval gate.
 The outer runner disables automatic export inside tracker logging and instructs Codex
 to defer export. The bundled exporter then runs once after the resume stage succeeds.
 Only jobs with a `.verified.json` receipt matching both the PDF and LaTeX hashes are
-eligible. It copies the verified PDF, `jd.txt` and `report.md` into the configured dated
+eligible. The daily runner passes `--skip-unverified`: older drafts without receipts
+are reported and left untouched without failing the batch. Invalid receipts, changed
+verified artifacts, copy failures and unavailable drives still fail export. Direct
+export commands remain strict unless this option is supplied.
+It copies the verified PDF, `jd.txt` and `report.md` into the configured dated
 folder, verifies sizes/SHA-256 hashes, records export metadata and updates matching tracker
 rows. It then removes only the source PDF and allowed LaTeX leftovers. Source, JD,
 report and answers remain. The daily runner never requests job-directory purging.

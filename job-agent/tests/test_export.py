@@ -103,6 +103,38 @@ class ExportTest(unittest.TestCase):
         self.assertFalse(self.base.exists())
         self.assertTrue((self.job/'resume.aux').exists())
 
+    def test_daily_export_skips_old_drafts_and_exports_verified_jobs(self):
+        draft = self.root/'jobs'/'old-draft'
+        draft.mkdir()
+        (draft/'resume.tex').write_text('unfinished draft')
+        before = {p.name: p.read_bytes() for p in draft.iterdir()}
+        code, output = self.run_export(apply=True, skip_unverified=True)
+        self.assertEqual(code, 0)
+        self.assertIn('SKIP old-draft: unverified draft; left untouched', output)
+        self.assertTrue((self.base/'2026-10-13'/'Applicant_Example.pdf').exists())
+        self.assertEqual(before, {p.name: p.read_bytes() for p in draft.iterdir()})
+        self.assertEqual(self.run_export(apply=True, skip_unverified=True)[0], 0)
+
+    def test_daily_export_still_fails_on_invalid_verified_artifacts(self):
+        for change in ('stale', 'invalid', 'copy_failure'):
+            with self.subTest(change=change):
+                original = (self.job/'resume.tex').read_text()
+                # Restore a valid receipt before each independent failure.
+                (self.job/'.verified.json').write_text(json.dumps({
+                    'pdf': 'Applicant_Example.pdf',
+                    'pdf_sha256': exporter.digest(self.job/'Applicant_Example.pdf'),
+                    'tex_sha256': exporter.digest(self.job/'resume.tex')}))
+                if change == 'stale':
+                    (self.job/'resume.tex').write_text('modified source')
+                elif change == 'invalid':
+                    (self.job/'.verified.json').write_text('{}')
+                with patch.object(exporter, 'matches', return_value=False):
+                    code, _ = self.run_export(apply=True, skip_unverified=True)
+                self.assertEqual(code, 1)
+                self.assertTrue((self.job/'Applicant_Example.pdf').exists())
+                self.assertFalse((self.job/'.exported.json').exists())
+                (self.job/'resume.tex').write_text(original)
+
     def test_purge_updates_tracker(self):
         write_csv(self.root/'tracker/jobs.csv',['company','role'],[{'company':'Example','role':'Engineer'}])
         self.assertEqual(self.run_export(apply=True,purge=True)[0],0)

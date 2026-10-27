@@ -69,7 +69,8 @@ def commands(config, args):
     if config.get('model'):
         resume += ['--model', config['model']]
     # Use the portable exporter even when reusing an existing job-agent directory.
-    export = [sys.executable, str(ROOT / 'job-agent/scripts/export_pdfs.py'), '--root', str(agent), '--apply']
+    export = [sys.executable, str(ROOT / 'job-agent/scripts/export_pdfs.py'),
+              '--root', str(agent), '--apply', '--skip-unverified']
     mount = config.get('export_mount')
     parts = config['export_dir'].parts
     if not mount and len(parts) >= 3 and parts[1] == 'mnt' and len(parts[2]) == 1:

@@ -24,7 +24,7 @@ def windows_path(path):
         return parts[2].upper() + ':\\' + '\\'.join(parts[3:])
     return str(path)
 
-def export(root, base, apply=False, purge=False, mount=None, today=None):
+def export(root, base, apply=False, purge=False, mount=None, today=None, skip_unverified=False):
     # Check before even creating destination folders or modifying tracker data.
     if mount is not None:
         if not mount.is_dir() or not os.access(mount, os.W_OK):
@@ -41,13 +41,18 @@ def export(root, base, apply=False, purge=False, mount=None, today=None):
     tracker = root / 'tracker/jobs.csv'
     count = deleted = freed = 0
     skipped = []
+    failures = 0
     reserved = set(day.iterdir()) if day.exists() else set()
     for job in sorted(jobs.iterdir()) if jobs.exists() else []:
         if not job.is_dir() or job.is_symlink():
             continue
+        if (job / '.exported.json').exists():
+            skipped.append((job.name, 'already exported'))
+            continue
+        if skip_unverified and not (job / '.verified.json').is_file():
+            skipped.append((job.name, 'unverified draft; left untouched'))
+            continue
         try:
-            if (job / '.exported.json').exists():
-                raise ValueError('already exported')
             meta = json.loads((job / 'job.json').read_text())
             if not (job / '.verified.json').is_file():
                 raise ValueError('no verification marker; run verify_resume.py --all')
@@ -121,9 +126,10 @@ def export(root, base, apply=False, purge=False, mount=None, today=None):
             count += 1
         except (OSError, ValueError, KeyError) as exc:
             skipped.append((job.name, str(exc)))
+            failures += 1
     print(f'{"APPLY" if apply else "DRY RUN"}: jobs exported={count}; day folder={windows_path(day)}; files deleted={deleted}; bytes freed in WSL={freed}')
     for name, reason in skipped: print(f'SKIP {name}: {reason}')
-    return 1 if any(reason != 'already exported' for _, reason in skipped) else 0
+    return int(failures > 0)
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -132,13 +138,16 @@ def main():
     mode.add_argument('--dry-run', action='store_true')
     parser.add_argument('--root', type=Path, default=ROOT, help='Resume workflow directory')
     parser.add_argument('--mount', type=Path, help='Require this export drive to be mounted and writable')
+    parser.add_argument('--skip-unverified', action='store_true',
+                        help='Leave drafts without verification receipts untouched without failing the batch')
     parser.add_argument('--purge-job', action='store_true')
     args = parser.parse_args()
     base = os.environ.get('RESUME_EXPORT_DIR')
     if not base:
         parser.error('Set RESUME_EXPORT_DIR to your export directory')
     try:
-        return export(args.root.resolve(), Path(base), args.apply, args.purge_job, mount=args.mount)
+        return export(args.root.resolve(), Path(base), args.apply, args.purge_job,
+                      mount=args.mount, skip_unverified=args.skip_unverified)
     except (OSError, ValueError) as exc:
         print(f'STOP: {exc}'); return 1
 
