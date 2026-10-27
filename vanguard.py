@@ -159,6 +159,8 @@ def run(config, args):
                 print(f'\n[{stage.upper()}]', flush=True)
                 report['stages'][stage] = {'status': 'running'}
                 save_report(path, report)
+                if callback := getattr(args, 'stage_callback', None):
+                    callback(stage, path)
                 code = subprocess.run(plan[stage], cwd=ROOT, env=environment(config)).returncode
                 report['stages'][stage] = {'status': 'failed' if code else 'completed', 'exit_code': code}
                 save_report(path, report)

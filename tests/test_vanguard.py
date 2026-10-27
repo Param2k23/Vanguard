@@ -59,6 +59,22 @@ class PipelineTests(unittest.TestCase):
         reports = [json.loads(p.read_text()) for p in self.config['run_dir'].glob('*.json')]
         self.assertTrue(all(r['status'] == 'failed' for r in reports))
 
+    def test_checkpoint_callback_precedes_each_stage(self):
+        events = []
+        def checkpoint(stage, path):
+            self.assertEqual(json.loads(path.read_text())['stages'][stage]['status'], 'running')
+            events.append(('checkpoint', stage))
+        def execute(command, **kwargs):
+            events.append(('execute', Path(command[1]).name))
+            return subprocess.CompletedProcess(command, 0)
+        self.args.stage_callback = checkpoint
+        with patch.object(vanguard, 'check', return_value=[]), patch.object(
+            vanguard.subprocess, 'run', side_effect=execute), contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(vanguard.run(self.config, self.args), 0)
+        self.assertEqual(events, [('checkpoint', 'scrape'), ('execute', 'scrape.py'),
+                                  ('checkpoint', 'resumes'), ('execute', 'generate_resumes.py'),
+                                  ('checkpoint', 'export'), ('execute', 'export_pdfs.py')])
+
     def test_restart_at_export(self):
         self.args.from_stage = 'export'
         code, calls = self.run_pipeline([0])

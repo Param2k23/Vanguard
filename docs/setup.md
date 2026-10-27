@@ -141,3 +141,8 @@ original files until you have checked a run. Do not copy these files to GitHub.
 
 `doctor` checks local files, tools and destination availability. It cannot establish
 live selectors, browser installation usability, authentication, model access or usage limits.
+
+## Schedule it automatically
+
+Once a manual run works, follow the [scheduling guide](scheduling.md) for daily
+Windows/WSL automation with background health checks, logs and recovery.

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+vanguard_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+cd -- "$vanguard_root"
+# No interactive shell initialization is required by Windows Task Scheduler.
+vanguard_python="${VANGUARD_PYTHON:-$vanguard_root/.venv/bin/python}"
+if [[ ! -x "$vanguard_python" ]]; then vanguard_python=python3; fi
+exec "$vanguard_python" "$vanguard_root/scripts/scheduled_run.py" "$@"

@@ -30,6 +30,12 @@ python vanguard.py run --from-stage export    # Retry only export
 python vanguard.py login                      # Save or refresh your Jobright session
 ```
 
+## Automatic daily runs
+
+Use the [scheduling guide](docs/scheduling.md) to install a Windows Task Scheduler
+job at 6 AM and noon Arizona time, every day. It starts WSL automatically, requests
+wake from sleep, catches up missed times and retries unfinished stages.
+
 ## Project layout
 
 ```text
@@ -37,6 +43,7 @@ Vanguard/
 ├── run                     # Launcher using the local Python environment
 ├── vanguard.py             # Daily command, preflight, locking and run reports
 ├── config/                 # Shared example and ignored local pipeline settings
+├── scripts/                # Scheduled launcher and Windows task setup
 ├── job-scraper/
 │   ├── scrape.py           # Collection and JD fetching
 │   ├── generate_resumes.py # Sequential Codex resume generation
